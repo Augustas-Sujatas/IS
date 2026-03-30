@@ -13,7 +13,7 @@ int main() {
     int pasirinkimas;
 
     do {
-        cout << "\n--- MENIU ---\n";
+        cout << "MENIU: \n";
         cout << "1. Prideti mokini\n";
         cout << "2. Rodyti visus\n";
         cout << "3. Atnaujinti pazymi\n";
@@ -22,26 +22,40 @@ int main() {
         cout << "Pasirinkimas: ";
         cin >> pasirinkimas;
 
-        // ===== 1. PRIDETI =====
+        // Prideda mokinius
         if (pasirinkimas == 1) {
-            cout << "Iveskite varda: ";
-            cin >> vardai[mokiniuKiekis];
+    int kiek;
+    cout << "Kiek mokiniu norite prideti: ";
+    cin >> kiek;
 
-            cout << "Kiek pazymiu (max 10): ";
-            cin >> pazymiuKiekis[mokiniuKiekis];
-
-            if (pazymiuKiekis[mokiniuKiekis] > 10)
-                pazymiuKiekis[mokiniuKiekis] = 10;
-
-            for (int i = 0; i < pazymiuKiekis[mokiniuKiekis]; i++) {
-                cout << "Pazymys " << i + 1 << ": ";
-                cin >> pazymiai[mokiniuKiekis][i];
-            }
-
-            mokiniuKiekis++;
+    for (int m = 0; m < kiek; m++) {
+        if (mokiniuKiekis >= MAX_MOKINIU) {
+            cout << "Pasiektas maksimalus mokiniu skaicius!\n";
+            break;
         }
 
-        // ===== 2. RODYTI =====
+        cout << "\nIveskite " << m + 1 << "-ojo mokinio varda: ";
+        cin >> vardai[mokiniuKiekis];
+
+        cout << "Kiek pazymiu (max 10): ";
+        cin >> pazymiuKiekis[mokiniuKiekis];
+
+        if (pazymiuKiekis[mokiniuKiekis] > MAX_PAZYMIU)
+            pazymiuKiekis[mokiniuKiekis] = MAX_PAZYMIU;
+
+        if (pazymiuKiekis[mokiniuKiekis] < 0)
+            pazymiuKiekis[mokiniuKiekis] = 0;
+
+        for (int i = 0; i < pazymiuKiekis[mokiniuKiekis]; i++) {
+            cout << "Pazymys " << i + 1 << ": ";
+            cin >> pazymiai[mokiniuKiekis][i];
+        }
+
+        mokiniuKiekis++;
+    }
+}
+
+        // Rodo mokinius
         else if (pasirinkimas == 2) {
             for (int i = 0; i < mokiniuKiekis; i++) {
                 cout << vardai[i] << ": ";
@@ -52,7 +66,7 @@ int main() {
             }
         }
 
-        // ===== 3. ATNAUJINTI =====
+        // Atnaujina mokinius
         else if (pasirinkimas == 3) {
             string vardas;
             cout << "Iveskite mokinio varda: ";
@@ -70,7 +84,7 @@ int main() {
             }
         }
 
-        // ===== 4. SALINTI =====
+        // Pasalinti
         else if (pasirinkimas == 4) {
             string vardas;
             cout << "Iveskite mokinio varda: ";
