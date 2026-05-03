@@ -41,11 +41,37 @@ int main() {
     int kiek;
 
     getData(menuList, kiek);
-
     showMenu(menuList, kiek);
 
+    int pasirinkimas;
+    int kiekis;
+    double suma = 0;
 
+    cout << "\nRinkis patiekalus (0 - baigti):" << endl;
 
+    while (true) {
+        cin >> pasirinkimas;
+
+        if (pasirinkimas == 0) {
+            break;
+        }
+
+        if (pasirinkimas < 1 || pasirinkimas > kiek) {
+            cout << "Blogas pasirinkimas!" << endl;
+            continue;
+        }
+
+        cout << "Kiek porciju?: ";
+        cin >> kiekis;
+
+        // pridedam prie bendros sumos
+        suma = suma + menuList[pasirinkimas - 1].menuPrice * kiekis;
+
+        cout << "Prideta!" << endl;
+    }
+
+    // kol kas tik suma be PVM
+    cout << "\nSuma be PVM: " << suma << " EUR" << endl;
 
 
 
