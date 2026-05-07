@@ -1,71 +1,118 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <iomanip>
+#include <iostream>   
+#include <fstream>   
+#include <string>     
+#include <iomanip>   
 
-using namespace std;
+using namespace std;  
 
-struct menuItemType {
-    string menuItem;
-    double menuPrice;
+struct menuItemType { 
+    string menuItem;  
+    double menuPrice; 
 };
 
 void getData(menuItemType menuList[], int &kiek) {
-    ifstream failas("menu.txt");
 
+    ifstream failas("menu.txt"); 
+
+   
     if (!failas) {
         cout << "Nepavyko atidaryti failo!" << endl;
-        return;
+        return; 
     }
 
-    kiek = 0;
+    kiek = 0;         // pradinis elementu kiekis
+    string eilute;    // Kintamasis vienai failo eilutei saugoti
 
-    while (failas >> menuList[kiek].menuItem >> menuList[kiek].menuPrice) {
-        kiek++;
+    // Skaito faila eilute po eilutes
+    while (getline(failas, eilute)) {
+
+        // Suranda paskutini TAB simboli eiluteje
+        size_t paskutinisTarpas = eilute.find_last_of('\t');
+
+        // Jei TAB simbolio nerado
+        if (paskutinisTarpas == string::npos)
+
+            // Tada iesko paskutinio paprasto tarpo
+            paskutinisTarpas = eilute.find_last_of(' ');
+
+        // Iskerpa teksta nuo pradzios iki paskutinio tarpo
+        // Tai bus patiekalo pavadinimas
+        menuList[kiek].menuItem =
+            eilute.substr(0, paskutinisTarpas);
+
+        // Iskerpa skaiciu po paskutinio tarpo
+        // stod() pavercia string i double tipo skaiciu
+        menuList[kiek].menuPrice =
+            stod(eilute.substr(paskutinisTarpas + 1));
+
+        kiek++; // Padidina patiekalu skaiciu
     }
 
-    failas.close();
+    failas.close(); 
 }
 
+// Funkcija meniu parodymui ekrane
 void showMenu(menuItemType menuList[], int kiek) {
+
     cout << "Pusryciu meniu:" << endl;
 
+    // Ciklas eina per visus meniu elementus
     for (int i = 0; i < kiek; i++) {
+
+        // Isveda numeri
         cout << i + 1 << ". "
+
+             // Isveda patiekalo pavadinima
              << menuList[i].menuItem << " - "
+
+             
+             // kad rodytu 2 skaicius po kablelio
              << fixed << setprecision(2)
+
              << menuList[i].menuPrice << " EUR" << endl;
     }
 }
 
 int main() {
+
+    // Sukuriamas masyvas kuris gali saugoti iki 50 patiekalu
     menuItemType menuList[50];
-    int kiek;
+
+    int kiek; // Saugos kiek patiekalu nuskaityta
 
     getData(menuList, kiek);
+
     showMenu(menuList, kiek);
 
-    int pasirinkimas;
-    int kiekis;
-    double suma = 0;
+    int pasirinkimas; 
+    int kiekis;       
+    double suma = 0; 
 
     cout << "\nRinkis patiekalus (0 - baigti):" << endl;
 
+    // Begalinis ciklas 
     while (true) {
-        cin >> pasirinkimas;
 
+        cin >> pasirinkimas; // Nuskaitomas pasirinkimas
+
+        // iveda 0 ciklas baigiasi
         if (pasirinkimas == 0) {
-            break;
+            break; 
         }
 
+        // Tikrinama ar pasirinkimas neteisingas
         if (pasirinkimas < 1 || pasirinkimas > kiek) {
+
             cout << "Blogas pasirinkimas!" << endl;
-            continue;
+
+            continue; 
         }
 
         cout << "Kiek porciju?: ";
-        cin >> kiekis;
 
+        cin >> kiekis; // Nuskaitomas porciju kiekis
+
+        //  suma
         suma = suma + menuList[pasirinkimas - 1].menuPrice * kiekis;
 
         cout << "Prideta!" << endl;
@@ -77,18 +124,24 @@ int main() {
     cout << fixed << setprecision(2);
 
     cout << "\nSuma: " << suma << " EUR" << endl;
-    cout << "PVM (21%): " << pvm << " EUR" << endl;
-    cout << "Galutine suma: " << galutine << " EUR" << endl;
 
+    cout << "PVM (21%): " << pvm << " EUR" << endl;
+
+    cout << "Galutine suma: " << galutine << " EUR" << endl;
 
     ofstream outFile("receipt.txt");
 
     outFile << fixed << setprecision(2);
+
     outFile << "Suma: " << suma << " EUR" << endl;
+
     outFile << "PVM (21%): " << pvm << " EUR" << endl;
+
     outFile << "Galutine suma: " << galutine << " EUR" << endl;
+     
+    outFile << " Pasirinkimai: " << galutine << " EUR" << endl;
 
-    outFile.close();
+    outFile.close(); 
 
-    return 0;
+    return 0; 
 }
