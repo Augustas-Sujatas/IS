@@ -1,27 +1,27 @@
-#include <iostream>   
-#include <fstream>   
-#include <string>     
-#include <iomanip>   
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip>
+#include <locale>
+#include <windows.h>
+using namespace std;
 
-using namespace std;  
-
-struct menuItemType { 
-    string menuItem;  
-    double menuPrice; 
+struct menuItemType {
+    string menuItem;
+    double menuPrice;
 };
 
 void getData(menuItemType menuList[], int &kiek) {
 
-    ifstream failas("menu.txt"); 
+    ifstream failas("menu.txt");
 
-   
     if (!failas) {
         cout << "Nepavyko atidaryti failo!" << endl;
-        return; 
+        return;
     }
 
-    kiek = 0;         // pradinis elementu kiekis
-    string eilute;    // Kintamasis vienai failo eilutei saugoti
+    kiek = 0;
+    string eilute;
 
     // Skaito faila eilute po eilutes
     while (getline(failas, eilute)) {
@@ -48,7 +48,7 @@ void getData(menuItemType menuList[], int &kiek) {
         kiek++; // Padidina patiekalu skaiciu
     }
 
-    failas.close(); 
+    failas.close();
 }
 
 // Funkcija meniu parodymui ekrane
@@ -59,89 +59,100 @@ void showMenu(menuItemType menuList[], int kiek) {
     // Ciklas eina per visus meniu elementus
     for (int i = 0; i < kiek; i++) {
 
-        // Isveda numeri
+    // Isveda numeri
         cout << i + 1 << ". "
-
-             // Isveda patiekalo pavadinima
              << menuList[i].menuItem << " - "
-
-             
-             // kad rodytu 2 skaicius po kablelio
              << fixed << setprecision(2)
-
              << menuList[i].menuPrice << " EUR" << endl;
     }
 }
 
-int main() {
+// 🔹 NAUJA funkcija
+void printCheck(menuItemType menuList[], int kiek,
+                int pasirinktiKiekiai[], double suma) {
 
-    // Sukuriamas masyvas kuris gali saugoti iki 50 patiekalu
+    double pvm = suma * 0.21;
+    double galutine = suma + pvm;
+
+    ofstream outFile("receipt.txt");
+
+    cout << "\n Sveiki atvykę į restoraną \n" << endl;
+    outFile << "Sveiki atvykę į restoraną \n";
+
+    cout << fixed << setprecision(2);
+    outFile << fixed << setprecision(2);
+
+    for (int i = 0; i < kiek; i++) {
+        if (pasirinktiKiekiai[i] > 0) {
+
+            cout << pasirinktiKiekiai[i] << "  "
+                 << menuList[i].menuItem << "   "
+                 << menuList[i].menuPrice << "€" << endl;
+
+            outFile << pasirinktiKiekiai[i] << "  "
+                    << menuList[i].menuItem << "   "
+                    << menuList[i].menuPrice << "€" << endl;
+        }
+    }
+
+    cout << "\nMokesčiai (21%)   " << pvm << "€" << endl;
+    cout << "Galutinė suma     " << galutine << "€" << endl;
+
+    outFile << "\nMokesčiai (21%)   " << pvm << "€" << endl;
+    outFile << "Galutinė suma     " << galutine << "€" << endl;
+
+    outFile.close();
+}
+
+int main()  {
+
+// konsolei rodytu lietuviskas raides
+SetConsoleOutputCP(65001);
+SetConsoleCP(65001);
+
     menuItemType menuList[50];
 
-    int kiek; // Saugos kiek patiekalu nuskaityta
+    int kiek;
 
     getData(menuList, kiek);
 
     showMenu(menuList, kiek);
 
-    int pasirinkimas; 
-    int kiekis;       
-    double suma = 0; 
+    int pasirinkimas;
+    int kiekis;
+    double suma = 0;
+
+    // masyvas pasirinkimams
+    int pasirinktiKiekiai[50] = {0};
 
     cout << "\nRinkis patiekalus (0 - baigti):" << endl;
 
-    // Begalinis ciklas 
     while (true) {
 
-        cin >> pasirinkimas; // Nuskaitomas pasirinkimas
+        cin >> pasirinkimas;
 
-        // iveda 0 ciklas baigiasi
         if (pasirinkimas == 0) {
-            break; 
+            break;
         }
 
-        // Tikrinama ar pasirinkimas neteisingas
         if (pasirinkimas < 1 || pasirinkimas > kiek) {
 
-            cout << "Blogas pasirinkimas!" << endl;
-
-            continue; 
+            cout << "Netinkamas pasirinkimas!" << endl;
+            continue;
         }
 
         cout << "Kiek porciju?: ";
+        cin >> kiekis;
 
-        cin >> kiekis; // Nuskaitomas porciju kiekis
+        // saugo pasirinkimus
+        pasirinktiKiekiai[pasirinkimas - 1] += kiekis;
 
-        //  suma
-        suma = suma + menuList[pasirinkimas - 1].menuPrice * kiekis;
+        suma += menuList[pasirinkimas - 1].menuPrice * kiekis;
 
         cout << "Prideta!" << endl;
     }
 
-    double pvm = suma * 0.21;
-    double galutine = suma + pvm;
+    printCheck(menuList, kiek, pasirinktiKiekiai, suma);
 
-    cout << fixed << setprecision(2);
-
-    cout << "\nSuma: " << suma << " EUR" << endl;
-
-    cout << "PVM (21%): " << pvm << " EUR" << endl;
-
-    cout << "Galutine suma: " << galutine << " EUR" << endl;
-
-    ofstream outFile("receipt.txt");
-
-    outFile << fixed << setprecision(2);
-
-    outFile << "Suma: " << suma << " EUR" << endl;
-
-    outFile << "PVM (21%): " << pvm << " EUR" << endl;
-
-    outFile << "Galutine suma: " << galutine << " EUR" << endl;
-     
-    outFile << " Pasirinkimai: " << galutine << " EUR" << endl;
-
-    outFile.close(); 
-
-    return 0; 
+    return 0;
 }
