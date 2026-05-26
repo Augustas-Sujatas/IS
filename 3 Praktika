@@ -59,7 +59,7 @@ void showMenu(menuItemType menuList[], int kiek) {
     // Ciklas eina per visus meniu elementus
     for (int i = 0; i < kiek; i++) {
 
-    // Isveda numeri
+    // Isveda numeri/kaina
         cout << i + 1 << ". "
              << menuList[i].menuItem << " - "
              << fixed << setprecision(2)
@@ -67,7 +67,7 @@ void showMenu(menuItemType menuList[], int kiek) {
     }
 }
 
-// 🔹 NAUJA funkcija
+// funkcija isvesti i receipt
 void printCheck(menuItemType menuList[], int kiek,
                 int pasirinktiKiekiai[], double suma) {
 
@@ -75,6 +75,7 @@ void printCheck(menuItemType menuList[], int kiek,
     double galutine = suma + pvm;
 
     ofstream outFile("receipt.txt");
+
 
     cout << "\n Sveiki atvykę į restoraną \n" << endl;
     outFile << "Sveiki atvykę į restoraną \n";
@@ -87,24 +88,25 @@ void printCheck(menuItemType menuList[], int kiek,
 
             cout << pasirinktiKiekiai[i] << "  "
                  << menuList[i].menuItem << "   "
-                 << menuList[i].menuPrice << "€" << endl;
+                 << menuList[i].menuPrice << "EUR" << endl;
 
             outFile << pasirinktiKiekiai[i] << "  "
                     << menuList[i].menuItem << "   "
-                    << menuList[i].menuPrice << "€" << endl;
+                    << menuList[i].menuPrice << "EUR" << endl;
         }
     }
 
-    cout << "\nMokesčiai (21%)   " << pvm << "€" << endl;
-    cout << "Galutinė suma     " << galutine << "€" << endl;
+    cout << "\nMokesčiai (21%)   " << pvm << "EUR" << endl;
+    cout << "Galutinė suma     " << galutine << "EUR" << endl;
 
-    outFile << "\nMokesčiai (21%)   " << pvm << "€" << endl;
-    outFile << "Galutinė suma     " << galutine << "€" << endl;
+    outFile << "\nMokesčiai (21%)   " << pvm << "EUR" << endl;
+    outFile << "Galutinė suma     " << galutine << "EUR" << endl;
 
     outFile.close();
 }
 
 int main()  {
+
 
 // konsolei rodytu lietuviskas raides
 SetConsoleOutputCP(65001);
@@ -122,7 +124,7 @@ SetConsoleCP(65001);
     int kiekis;
     double suma = 0;
 
-    // masyvas pasirinkimams
+    // masyvas pasirinkimams kiekiams saugoti
     int pasirinktiKiekiai[50] = {0};
 
     cout << "\nRinkis patiekalus (0 - baigti):" << endl;
@@ -152,7 +154,7 @@ SetConsoleCP(65001);
         cout << "Prideta!" << endl;
     }
 
-    printCheck(menuList, kiek, pasirinktiKiekiai, suma);
+    printCheck(menuList, kiek, pasirinktiKiekiai, suma); //spausdina ceki
 
     return 0;
 }
